@@ -1,0 +1,5 @@
+project_id = "ornate-reef-342810"
+environment = "dev"
+subnet1_region = "europe-west2"
+subnet1_zone = "europe-west2-c"
+subnet1_cidr = "10.10.0.0/16"
