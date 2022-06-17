@@ -33,10 +33,10 @@ The following list is brief summary of the content found in `main.tf`, divided b
      - `gh-secrets` (github credentials)
      - `jenkins-secrets` (credentials to access the jenkins-gke node pool in order to configure K8S executers)
    - Service Account Permissions, each defined as a `google_<resource>_aim_member` resource. They are:
-     - gke (`<resource> = project` enables K8s to view and pull artifacts from GCS. AIM role: `roles/objectViewer`)
-     - cluster-dev (`<resource> = project` enables GSA to add and delete pods for jenkins builder. AIM role: `roles/container.developer`)
-     - tf-state-writer (`<resource> = storage_bucket` allows Jenkins to write TF state for pipelines into GCS backend. AIM role: `roles/storage.admin`)
-     - jenkins-project (`<resource> = project` grant Jenkins project editor permissions. AIM role: `roles/editor`)
+     - gke (`<resource> = project` enables K8s to view and pull artifacts from GCS. IAM role: `roles/objectViewer`)
+     - cluster-dev (`<resource> = project` enables GSA to add and delete pods for jenkins builder. IAM role: `roles/container.developer`)
+     - tf-state-writer (`<resource> = storage_bucket` allows Jenkins to write TF state for pipelines into GCS backend. IAM role: `roles/storage.admin`)
+     - jenkins-project (`<resource> = project` grant Jenkins project editor permissions. IAM role: `roles/editor`)
    - Helm Chart: `jenkinsci/jenkins` (Kubernetes plugin for Jenkins Clusters)
      
 [Exemplary Code](https://github.com/GoogleCloudPlatform/solutions-terraform-jenkins-gitops/blob/dev/jenkins-gke/tf-gke/main.tf)
@@ -90,7 +90,11 @@ Pipelines themselves are defined within the [Jenkinsfile](https://www.jenkins.io
 
 ### 6. Data Ingestion Endpoint
 
-We wish to
+We wish to have a data ingestion endpoint to process data through HTTP API requests (contextual + bidstream).
+
+This allows us to receive incoming raw data and (optionally) performing pre-processing before storing them to the PostgreSQL DB. 
+The stored data will be later used by DolphinScheduler implementing the necessary Business Logic. 
+
 
 
 
@@ -100,6 +104,9 @@ We wish to
 2. do we need an artifact storage for the system image of each node pool? 
    a) can substitute containerregistry.googleapis.com to [artifactregistry.googleapis.com](https://cloud.google.com/artifact-registry/docs/reference/rest) 
    b) if necessary change `resource "google_project_iam_member" "gke"` resource in main.tf.
+3. Scripts to change locations in all `values.yaml` files, for all plugins (dolphinscheduler, etc.)
+   - Alternatively, ensure that `terraform.tfvars` content is passed correctly to all submodules.
+
 
 
 continue with: https://plugins.jenkins.io/kubernetes/#plugin-content-declarative-pipeline (already open in firefox.)
