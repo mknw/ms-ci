@@ -26,7 +26,7 @@ The following list is brief summary of the content found in `main.tf`, divided b
    - enabling required google apis (IAM, compute, container (GKE), logging, monitoring)
    - Jenkins-vpc (the *network* infr.: `terraform-google-modules/network`[/readme.md](https://registry.terraform.io/modules/terraform-google-modules/network/google/latest))
    - jenkins node pools (*'server'* infr.: `terraform-google-modules/kubernetes-engine/beta-public-cluster`[/readme.md](https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/latest/submodules/beta-public-cluster))
-   - Workload Identity (GCP access from k8s: `terraform-gogle-modules/kuberetes-engine/workload-identity/`[readme.md](https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/latest/submodules/workload-identity))
+   - Workload Identity (GCP access from k8s: `terraform-gogle-modules/kuberetes-engine/workload-identity`[/readme.md](https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/latest/submodules/workload-identity))
 
    Create the resources: 
    - kubernetes_secrets, containing: 
