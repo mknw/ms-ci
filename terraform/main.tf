@@ -30,7 +30,7 @@ module "jenkins-vpc" {
   network_name = var.network_name
   routing_mode = "GLOBAL" // (default)
 
-  subnets = [
+  subnets = [ # TODO
    {
       subnet_name = var.subnet_name
       subnet_ip = "10.0.0.0/17"
@@ -75,7 +75,7 @@ module "jenkins-gke" {
   service_account          = "create"
   identity_namespace       = "${module.enables-google-apis.project_id}.svc.id.goog"
   node_metadata            = "GKE_METADATA_SERVER"
-  node_pools = [
+  node_pools = [ # add node pools for other services here?
    {
       name         = "butler-pool"
       min_count    = 3
@@ -137,7 +137,7 @@ resource "kubernetes_secret" "jenkins-secrets" {
 ******************************/
 resource "kubernetes_secret" "gh-secrets" {
    metadata {
-      name = "gihtub-secrets"
+      name = "github-secrets"
    }
    data = {
       github_username = var.github_username

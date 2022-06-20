@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+
+
+  // Conditional Behaviour: 
+  /////////////////////////
+  // This pipeline has different behaviors depending on the branch being fetched.
+  // The build checks whether the TARGET_ENV variable matches any environment folder.
+  // If it does match, Jenkins executes terraform plan for that environment.
+  // Otherwise, Jenkins executes terraform plan for all environments 
+  // to make sure that the proposed change holds for them all.
+  // If any of these plans fail to execute, the build fails.
+
 pipeline {
   agent {
       label "terraform-exec"
@@ -31,12 +42,12 @@ pipeline {
             TARGET_ENV=$BRANCH_NAME
           fi
 
-          if [ -d "example-pipelines/environments/${TARGET_ENV}/" ]; then
+          if [ -d "pipelines/environments/${TARGET_ENV}/" ]; then
             cd example-pipelines/environments/${TARGET_ENV}
             terraform init
             terraform validate
           else
-            for dir in example-pipelines/environments/*/
+            for dir in pipelines/environments/*/
             do 
               cd ${dir}
               env=${dir%*/}

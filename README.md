@@ -19,7 +19,7 @@ variables.tf
 backend.tf
 : Our way to store the terraform state: [gcs](https://www.terraform.io/language/settings/backends/configuration) (Google Cloud Storage). Since versioning can be enabled on this backend type, risks of disruption due to configuration errors are mitigated. One can find the `tfstate` file in the 'buckets' section of GCP.
 
-### 2. Define initial infrastructure. 
+### 2. Define initial Jenkins infrastructure
 The following list is brief summary of the content found in `main.tf`, divided by main block type: module and resource.
 
   Load the modules for: 
@@ -41,6 +41,17 @@ The following list is brief summary of the content found in `main.tf`, divided b
      
 [Exemplary Code](https://github.com/GoogleCloudPlatform/solutions-terraform-jenkins-gitops/blob/dev/jenkins-gke/tf-gke/main.tf)
 
+### 2.b Define subsequent Dev and Prod environments
+
+In order to create VPC's for Dev and Prod environments,
+these need to specified (see `pipelines/environments/`). 
+Both `dev` and `prod` require the same implementation, which enables us to symlink the files `{main,outputs,variables}.tf` to each env.
+
+Each environment is then built by jenkins, as defined in `pipelines/environments/Jenkinsfile`.
+
+
+
+
 ### 3. Add necessary components
 
 The Helm Chart for the job scheduler: DolphinScheduler; will be needed to install the software on k8s. After downloading the chart, one can look at how the 'jenkins` chart is installed (previous section) to perform the same operations with DS.
@@ -55,7 +66,7 @@ by using the `helm_release` terraform module.
 
 These changes are implemented in the current repository as of 16/06/2022 and can be found at: terraform/main.tf.
 
-### 4. Configure DolphinScheduler. 
+### 4. Configure DolphinScheduler
 
 In addition to default values, we would like to add features such as: 
 
@@ -95,8 +106,9 @@ We wish to have a data ingestion endpoint to process data through HTTP API reque
 This allows us to receive incoming raw data and (optionally) performing pre-processing before storing them to the PostgreSQL DB. 
 The stored data will be later used by DolphinScheduler implementing the necessary Business Logic. 
 
+### 7. BigQuery Addition
 
-
+Bigquery configuration can be performed by using the bigquery terraform module. 
 
 ## TODO
 
@@ -106,8 +118,30 @@ The stored data will be later used by DolphinScheduler implementing the necessar
    b) if necessary change `resource "google_project_iam_member" "gke"` resource in main.tf.
 3. Scripts to change locations in all `values.yaml` files, for all plugins (dolphinscheduler, etc.)
    - Alternatively, ensure that `terraform.tfvars` content is passed correctly to all submodules.
+4. Data Confidentiality. Security / Anonimisation / Credentials Management. 
 
 
 
 continue with: https://plugins.jenkins.io/kubernetes/#plugin-content-declarative-pipeline (already open in firefox.)
 
+## Notes
+
+### VPC requirements
+
+When creating a cluster, the VPC needs:
+
+- sufficient N of IP addresses for cluster, nodes and any other resource. (every pod get is own IP address)
+
+### IP addresses
+
+- Containers within a pod share the pod IP address and can communicate freely with each other.
+- Pods can communicate with all other pods in the cluster using pod IP adresses
+- Isolation is defined using network policies.
+
+### K8s services
+
+- Services abstract to a group of pods as a network service.
+- Group of pods is usually defined using a *label selector*
+-  
+
+This style of network can be called 'flat network'.

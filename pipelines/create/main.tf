@@ -18,8 +18,8 @@
   Locals
  *****************************************/
 locals {
-  vpc_network_name = "example-vpc-${var.environment}"
-  vm_name = "example-vm-${var.environment}-001"
+  vpc_network_name = "vpc-${var.environment}"
+  vm_name = "vm-${var.environment}-http-endpoint"
 }
 
 /*****************************************
@@ -47,10 +47,29 @@ module "gcp-network" {
   ]
 }
 
+
+/*****************************************
+  Dolphin Scheduler stuff. 
+ *****************************************/
+
+data "local_file" "dolphinscheduler_chart_values" {
+   filename = "${path.module}/values.yaml"
+}
+
+resource "helm_release" "dolphin_scheduler" {
+   name = "dolphin-scheduler"
+   repository = "https://charts.bitnami.com/bitnami"
+   chart = "dolphinscheduler"
+   version = "3.0.0"
+   recreate_pod = true
+
+   values = [data.local_file.dolphinscheduler_chart_values]
+}
+
 /*****************************************
   Create a GCE VM Instance
  *****************************************/
-resource "google_compute_instance" "vm_0001" {
+resource "google_compute_instance" "http_endpoint" {
   project      = var.project_id
   zone         = var.subnet1_zone
   name         = local.vm_name
