@@ -5,9 +5,10 @@
 # In your terminal, type: 
 #   $ `source local-setup`
 
-export PROJECT_ID='ornate-reef-342810'
-export GITHUB_USER='mknw'
-export GITHUB_EMAIL='m.accetto@massarius.com'
+export PROJECT_ID=''
+export GITHUB_USER=''
+export GITHUB_EMAIL=''
+export GITHUB_TOKEN=''
 gcloud config set project $PROJECT_ID
 
 
