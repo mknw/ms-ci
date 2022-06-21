@@ -18,7 +18,7 @@
 variable "project_id" {
   type        = string
   description = "Project ID of GCP project to be used"
-  default     = ""
+  default     = "ornate-reef-342810"
 }
 
 variable "environment" {
@@ -30,17 +30,17 @@ variable "environment" {
 variable "subnet1_region" {
   type        = string
   description = "GCP Region where first subnet will be created"
-  default     = "us-central1"
+  default     = "europe-west1"
 }
 
 variable "subnet1_zone" {
   type        = string
   description = "GCP Zone within Subnet1 Region where GCE instance will be created"
-  default     = "us-central1-a"
+  default     = "europe-west1-b"
 }
 
 variable "subnet1_cidr" {
   type        = string
   description = "VPC Network CIDR to be assigned to the VPC being created"
-  default     = "10.0.0.0/17"
+  default     = "10.0.0.0/16"
 }

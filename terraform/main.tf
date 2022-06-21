@@ -184,21 +184,3 @@ resource "helm_release" "jenkins" {
    ]
 }
 
-
-/*****************************************
-  Dolphin Scheduler stuff. 
- *****************************************/
-
-data "local_file" "dolphinscheduler_chart_values" {
-   filename = "${path.module}/values.yaml"
-}
-
-resource "helm_release" "dolphin_scheduler" {
-   name = "dolphin-scheduler"
-   repository = "https://charts.bitnami.com/bitnami"
-   chart = "dolphinscheduler"
-   version = "3.0.0"
-   recreate_pod = true
-
-   values = [data.local_file.dolphinscheduler_chart_values]
-}

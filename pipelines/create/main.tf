@@ -26,15 +26,15 @@ locals {
   Google Provider Configuration
  *****************************************/
 provider "google" {
-  version = ">= 3.19.0" # was "~> 2.18.0". Rever in case of compatibility issues.
+  version = "~> 4.25" # was "~> 2.18.0". Revert in case of compatibility issues.
 }
 
 /*****************************************
   Create a VPC Network 
  *****************************************/
-module "gcp-network" {
+module "composer-vpc" {
   source       = "terraform-google-modules/network/google"
-  version      = "~> 1.4.0"
+  version      = "~> 5.1"
   project_id   = var.project_id
   network_name = local.vpc_network_name
 
@@ -49,34 +49,56 @@ module "gcp-network" {
 
 
 /*****************************************
-  Dolphin Scheduler stuff. 
+  Create Composer Instance
  *****************************************/
 
-data "local_file" "dolphinscheduler_chart_values" {
-   filename = "${path.module}/values.yaml"
+module simple-composer-environment {
+  source = "terraform-google-modules/composer/google//modules/create_environment_v2"
+  project_id                       = var.project_id
+  composer_env_name                = var.composer_env_name
+  region                           = var.region
+  composer_service_account         = var.composer_service_account
+  network                          = var.network
+  # subnetwork                      = var.subnetwork
+  subnetwork                       = module.composer-vpc.subnets_self_links[0]
+  pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
+  service_ip_allocation_range_name = var.service_ip_allocation_range_name
+  grant_sa_agent_permission        = false
+  environment_size                 = "ENVIRONMENT_SIZE_MEDIUM"
+  environment_variables            = {} // just the default, for future config.
+
+  scheduler = {
+    cpu        = 0.875
+    memory_gb  = 1.875
+    storage_gb = 1
+    count      = 1
+  }
+  web_server = {
+    cpu        = 0.875
+    memory_gb  = 2
+    storage_gb = 1
+  }
+  worker = {
+    cpu        = 1
+    memory_gb  = 2.5
+    storage_gb = 2
+    min_count  = 1
+    max_count  = 3
+  }
 }
 
-resource "helm_release" "dolphin_scheduler" {
-   name = "dolphin-scheduler"
-   repository = "https://charts.bitnami.com/bitnami"
-   chart = "dolphinscheduler"
-   version = "3.0.0"
-   recreate_pod = true
-
-   values = [data.local_file.dolphinscheduler_chart_values]
-}
 
 /*****************************************
   Create a GCE VM Instance
  *****************************************/
-resource "google_compute_instance" "http_endpoint" {
+resource "compute_instance" "http_endpoint" {
   project      = var.project_id
   zone         = var.subnet1_zone
   name         = local.vm_name
-  machine_type = "f1-micro"
+  machine_type = "e2-medium"
   network_interface {
-    network    = module.gcp-network.network_name
-    subnetwork = module.gcp-network.subnets_self_links[0]
+    network    = module.composer-vpc.network_name
+    subnetwork = module.composer-vpc.subnets_self_links[0]
   }
   boot_disk {
     initialize_params {

@@ -19,6 +19,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Please find documentation for dolphinscheduler in the `src` repository 
+# in `docs`.
+# on my computer, this is: /home/massive/code/dolphin-scheduler/apache-dolphinscheduler-3.0.0-beta-1-src/docs/docs/en
+
+
 timezone: "Europe/Amsterdam"
 
 image:
