@@ -5,6 +5,11 @@
 # In your terminal, type: 
 #   $ `source local-setup`
 
+# !! This file serves as a template and should therefore remain untouched. 
+# Copy its content instead to, e.g. `my-local-setup` (in the same dir. )
+# and customize the contents.
+# `my-local-setup` is already added to .gitignore, and won't be synched upstream.
+
 export PROJECT_ID=''
 export GITHUB_USER=''
 export GITHUB_EMAIL=''
