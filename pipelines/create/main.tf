@@ -19,7 +19,7 @@
  *****************************************/
 locals {
   vpc_network_name = "vpc-${var.environment}"
-  vm_name = "vm-${var.environment}-http-endpoint"
+  vm_name = "vm-${var.environment}-api-endpoint"
 }
 
 /*****************************************
@@ -37,6 +37,7 @@ module "composer-vpc" {
   version      = "~> 5.1"
   project_id   = var.project_id
   network_name = local.vpc_network_name
+  mtu          = 1460
 
   subnets = [
     {
@@ -44,6 +45,11 @@ module "composer-vpc" {
       subnet_ip     = var.subnet1_cidr
       subnet_region = var.subnet1_region
     },
+    {
+      subnet_name = "${local.vpc_network_name}-${var.subnet1_region}-nat"
+      subnet_ip = "192.168.1.0/24"
+      subnet_region = var.subnet1_region
+    }
   ]
 }
 
@@ -91,7 +97,7 @@ module simple-composer-environment {
 /*****************************************
   Create a GCE VM Instance
  *****************************************/
-resource "compute_instance" "http_endpoint" {
+resource "google_compute_instance" "api" {
   project      = var.project_id
   zone         = var.subnet1_zone
   name         = local.vm_name
@@ -105,4 +111,36 @@ resource "compute_instance" "http_endpoint" {
       image = "debian-cloud/debian-9"
     }
   }
+}
+
+/**************
+Service Account for NAT connection
+**************/
+resource "google_project_iam_member" "project" {
+  project = var.project_id
+  role    = "roles/iap.tunnelResourceAccessor"
+  member  = "serviceAccount:nat-tunnel-access@${var.project_id}.iam.gserviceaccount.com"
+}
+
+/**************
+Setup NAT router
+**************/
+resource "google_compute_router" "router" {
+  project = var.project_id
+  name    = "nat-router"
+  network = module.composer-vpc.network_name
+  region  = var.subnet1_region
+}
+
+/*************
+Cloud NAT
+**************/
+module "cloud-nat" {
+  source                             = "terraform-google-modules/cloud-nat/google"
+  version                            = "~> 2.0.0"
+  project_id                         = var.project_id
+  region                             = var.subnet1_region
+  router                             = google_compute_router.router.name
+  name                               = "nat-config"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }

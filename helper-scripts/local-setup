@@ -1,0 +1,25 @@
+#!/usr/bin/sh
+
+# this configures the local machines according to the necessary values.
+
+# In your terminal, type: 
+#   $ `source local-setup`
+
+export PROJECT_ID='ornate-reef-342810'
+export GITHUB_USER='mknw'
+export GITHUB_EMAIL='m.accetto@massarius.com'
+gcloud config set project $PROJECT_ID
+
+
+git config --global user.email $GITHUB_EMAIL
+git config --global user.name $GITHUB_USER
+
+
+GS_BUCKET="gs://${PROJECT_ID}-tfstate"
+
+# create bucket to store infrastructure record: terraform state (tfstate)
+gsutil mb $GS_BUCKET
+
+# setup versioning to keep record of infrastractural changes 
+gsutil versioning set on $GS_BUCKET
+

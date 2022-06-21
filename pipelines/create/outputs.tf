@@ -15,10 +15,12 @@
  */
 
 output "vpc_name" {
+  description = "name of the VPC for composer and HTTP endpoint."
   value = module.gcp-network.network_name
 }
 
 output "vm_name" {
+  description = "Name of the VM to connect for contextual and bidstream apis."
   value = compute_instance.http_endpoint.name
 }
 

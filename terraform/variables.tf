@@ -25,12 +25,12 @@ variable "tfstate_gcs_backend" {
 
 variable "region" {
   description = "The GCP region to deploy instances into"
-  default     = "europe-west1"
+  default     = "europe-west4"
 }
 
 variable "zones" {
   description = "The GCP zone to deploy gke into"
-  default     = ["europe-west1-b"]
+  default     = ["europe-west4-a"]
 }
 
 variable "ip_range_pods_name" {

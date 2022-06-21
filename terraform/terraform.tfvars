@@ -1,7 +1,7 @@
 project_id = "ornate-reef-342810"
 tfstate_gcs_backend = "ornate-reef-342810-tfstate"
-region = "europe-west1"
-zones = "europe-west1-b"
+region = "europe-west4"
+zones = "europe-west4-a"
 
 ip_range_pods_name = "ip-range-pods"
 ip_range_services_name = "ip-range-scv"
