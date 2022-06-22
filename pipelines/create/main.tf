@@ -125,7 +125,7 @@ resource "google_project_iam_member" "project" {
 /********************
  Make firewall rule
 ********************/
-resource "google_compute_firwall" "rules" {
+resource "google_compute_firewall" "rules" {
   project = var.project_id
   name    = "allow-ssh"
   network = var.network # Replace with a reference or self link to your network, in quotes
