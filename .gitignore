@@ -1,6 +1,7 @@
 # personal setup scripts
 helper-scripts/my-local-setup
 .GSA_TERRAFORM_CLOUD.json
+.JENKINS_CREDENTIALS
 
 # 
 .kitchen/

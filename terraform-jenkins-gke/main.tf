@@ -105,9 +105,9 @@ module "workload_identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version             = "~> 21.1"
   project_id          = module.enables-google-apis.project_id
-  name                = "jenkins-wi-${module.jenkins-gke.name}"
+  name                = "jenkins-wli-${module.jenkins-gke.name}"
   namespace           = "default"
-  use_existing_k8s_sa = false
+  use_existing_k8s_sa = false # changed 22
 }
 
 # enable GSA to add and delete pods for jenkins builders
@@ -172,7 +172,7 @@ data "local_file" "helm_chart_values" {
 
 resource "helm_release" "jenkins" {
    name        = "jenkins"
-   repository  = "https://charts.helm.sh/stable"
+   repository  = "https://charts.jenkins.io"
    chart       = "jenkins"
    version     = "4.1.5"
    timeout     = 1200

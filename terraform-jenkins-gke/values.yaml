@@ -27,6 +27,6 @@ agent:
       cpu: "1"
       memory: "512Mi"
 persistence:
-  size: 100Gi
+  size: 50Gi
 serviceAccount:
   name: cd-jenkins

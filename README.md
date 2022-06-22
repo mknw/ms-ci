@@ -4,6 +4,8 @@ Massarius Continuous Integration
 
 ## How to use
 
+### Create Jenkins K8S cluster
+
 1. Change fields such as: zones, regions, project, et cetera. For now, this fields can be kept as they are for the experimental environment. 
 
 2. if you haven't done it already, run `gcloud services enable compute.googleapis.com
@@ -11,6 +13,27 @@ Massarius Continuous Integration
 3. Source the script in this repo at helper-scripts/local-setup, after filling in your information. For the PAT (personal access token), you can provide the scope 'repo'. Please modify the script to a file called `my-local-setup`, which is already ignored by git (see .gitignore). 
 
 4. terraform init
+
+5. `terraform plan --var "github_username=$GITHUB_USER" --var "github_token=$GITHUB_TOKEN"`
+
+6. `terraform apply --auto-approve --var "github_username=$GITHUB_USER" --var "github_token=$GITHUB_TOKEN"`
+
+7. `cd ..`
+
+8. `gcloud container clusters get-credentials jenkins --zone=us-east4-a --project=${PROJECT_ID}` will retrieve the cluster credentials for jenkins internal use. Run it, the output should be: `Fetching cluster endpoint and auth data. kubeconfig entry generated for jenkins`.
+
+9. Once Jenkins is provided with cluster credentials, you can output jenkins URL and credentials as follows: 
+
+```
+JENKINS_IP=$(kubectl get service jenkins -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+JENKINS_PASSWORD=$(kubectl get secret jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode);echo
+printf "Jenkins url: http://$JENKINS_IP\nJenkins user: admin\nJenkins password: $JENKINS_PASSWORD\n"
+```
+
+### Changing the infrastructure
+
+
+
 
 ## Configuration
 
