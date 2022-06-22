@@ -27,5 +27,9 @@ GS_BUCKET="gs://${PROJECT_ID}-tfstate"
 gsutil mb $GS_BUCKET
 
 # setup versioning to keep record of infrastractural changes 
-gsutil versioning set on $GS_BUCKET
+if [[ $(gsutil versioning get $GS_BUCKET | awk '{print $2}') != 'Enabled' ]]; then
+   gsutil versioning set on $GS_BUCKET
+else
+   echo "Versioning for ${GS_BUCKET} already enabled."
+fi
 
