@@ -2,6 +2,12 @@
 
 Massarius Continuous Integration
 
+## How to use
+
+1. Change fields such as: zones, regions, project, et cetera. For now, this fields can be kept as they are for the experimental environment. 
+
+2. Source the script in this repo at helper-scripts/local-setup, after filling in your information. For the PAT (personal access token), you can provide the scope 'repo'. Modify the script to a file called `my-local-setup`, which is already ignored by git (see .gitignore). 
+
 ## Configuration
 
 Initial steps taken to setup the repository and documented below.
