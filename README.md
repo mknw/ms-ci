@@ -6,9 +6,11 @@ Massarius Continuous Integration
 
 1. Change fields such as: zones, regions, project, et cetera. For now, this fields can be kept as they are for the experimental environment. 
 
-2. Source the script in this repo at helper-scripts/local-setup, after filling in your information. For the PAT (personal access token), you can provide the scope 'repo'. Please modify the script to a file called `my-local-setup`, which is already ignored by git (see .gitignore). 
+2. if you haven't done it already, run `gcloud services enable compute.googleapis.com
 
-3. 
+3. Source the script in this repo at helper-scripts/local-setup, after filling in your information. For the PAT (personal access token), you can provide the scope 'repo'. Please modify the script to a file called `my-local-setup`, which is already ignored by git (see .gitignore). 
+
+4. terraform init
 
 ## Configuration
 

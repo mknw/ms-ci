@@ -1,13 +1,13 @@
 /******************************
  K8s provider configuration
 ******************************/
-data "google_config_config" "default" {
+data "google_client_config" "default" {
 }
 
 provider "kubernetes" {
-   host = "https://${module.jenkins-k8s.endpoint}"
+   host = "https://${module.jenkins-gke.endpoint}"
    token = data.google_client_config.default.access_token
-   cluster_ca_certificate = base64decode(module.jenkins-k8s.endpoint)
+   cluster_ca_certificate = base64decode(module.jenkins-gke.endpoint)
 }
 
 /******************************
@@ -15,9 +15,9 @@ provider "kubernetes" {
 ******************************/
 provider "helm" {
    kubernetes {
-      host = "https://${module.jenkins-k8s.endpoint}"
+      host = "https://${module.jenkins-gke.endpoint}"
       token = data.google_client_config.default.access_token
-      cluster_ca_certificate = base64decode(module.jenkins-k8s.endpoint)
+      cluster_ca_certificate = base64decode(module.jenkins-gke.endpoint)
    }
 }
 

@@ -47,7 +47,7 @@ module "jenkins-vpc" {
          ip_cidr_range = "192.168.0.0/18"
       },
       {
-         range_name = var.ip_range.ip_range_pods_name
+         range_name = var.ip_range_services_name
          ip_cidr_range = "192.168.64.0/18"
       }
    ]
@@ -64,7 +64,7 @@ module "jenkins-gke" {
   project_id               = var.project_id
   name                     = "jenkins"
   region                   = var.region
-  zone                     = var.zone
+  zones                     = var.zones
   network                  = module.jenkins-vpc.network_name
   subnetwork               = module.jenkins-vpc.subnets_names[0]
   ip_range_pods            = var.ip_range_pods_name
@@ -122,7 +122,7 @@ resource "google_project_iam_member" "cluster-dev" {
 ******************************/
 resource "kubernetes_secret" "jenkins-secrets" {
    metadata {
-      name = var.jenkins_j8s_config
+      name = var.jenkins_k8s_config
    }
    data = {
       project_id          = var.project_id
