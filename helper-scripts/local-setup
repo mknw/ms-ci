@@ -14,6 +14,8 @@ export PROJECT_ID=''
 export GITHUB_USER=''
 export GITHUB_EMAIL=''
 export GITHUB_TOKEN=''
+PROJECT_ROOT="${HOME}/add/path/to/repo"
+
 gcloud config set project $PROJECT_ID
 
 
@@ -33,3 +35,7 @@ else
    echo "Versioning for ${GS_BUCKET} already enabled."
 fi
 
+# create service account credentials
+gcloud iam service-accounts keys create ../.GSA_TERRAFORM_CLOUD.json --iam-account=terraform-cloud@ornate-reef-342810.iam.gserviceaccount.com
+
+export GOOGLE_APPLICATION_CREDENTIALS="{$PROJECT_ROOT}/.GSA_TERRAFORM_CLOUD.JSON"
