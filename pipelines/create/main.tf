@@ -122,6 +122,22 @@ resource "google_project_iam_member" "project" {
   member  = "serviceAccount:nat-tunnel-access@${var.project_id}.iam.gserviceaccount.com"
 }
 
+/********************
+ Make firewall rule
+********************/
+resource "google_compute_firwall" "rules" {
+  project = var.project_id
+  name    = "allow-ssh"
+  network = var.network # Replace with a reference or self link to your network, in quotes
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  source_ranges = ["35.235.240.0/20"]
+}
+
+
 /**************
 Setup NAT router
 **************/
