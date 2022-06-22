@@ -21,7 +21,7 @@ output "vpc_name" {
 
 output "vm_name" {
   description = "Name of the VM to connect for contextual and bidstream apis."
-  value = compute_instance.http_endpoint.name
+  value = compute_instance.api.name
 }
 
 
