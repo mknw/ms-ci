@@ -70,7 +70,7 @@ module simple-composer-environment {
   pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
   service_ip_allocation_range_name = var.service_ip_allocation_range_name
   grant_sa_agent_permission        = false
-  environment_size                 = "ENVIRONMENT_SIZE_MEDIUM"
+  environment_size                 = "ENVIRONMENT_SIZE_SMALL"
   environment_variables            = {} // just the default, for future config.
 
   scheduler = {
