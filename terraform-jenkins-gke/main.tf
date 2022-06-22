@@ -75,11 +75,11 @@ module "jenkins-gke" {
   service_account          = "create"
   identity_namespace       = "${module.enables-google-apis.project_id}.svc.id.goog"
   node_metadata            = "GKE_METADATA_SERVER"
-  node_pools = [ # add node pools for other services here?
+  node_pools = [ 
    {
       name         = "butler-pool"
-      min_count    = 3
-      max_count    = 6
+      min_count    = 2
+      max_count    = 4
       auto_upgrade = true
    }
   ]
