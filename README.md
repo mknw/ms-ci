@@ -33,12 +33,13 @@ printf "Jenkins user: admin\nJenkins password: $JENKINS_PASSWORD\n"
 
 
 Now let's port-forward the `jenkins` service so we can access it. 
-Run `kubectl port-forward pods/jenkins-0 LOCAL_PORT:8080` to connect to the jenkins pod. 
+Run `kubectl port-forward pods/jenkins-0 8080:8080` to connect to the jenkins pod. 
 (You can leave LOCAL_PORT unspecified to let kubectl choose your port) This command will print the local address at which you can access the remote Jenkins instance.
 This command does not return, therefore you can run it in a different shell than the one containing your environment variables.
 
 (to get jenkins token one can run `curl -v -X GET http://LOCAL_HOST:LOCAL_PORT/crumbIssuer/api/json --user username:password`. This info is useless here but we keep it for reference).
 
+`export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=jenkins" -o jsonpath="{.items[0].metadata.name}")`
 
 
 ### Changing the infrastructure
