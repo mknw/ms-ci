@@ -14,7 +14,7 @@
 
 # Standard values.yaml can be found at: 
 # https://github.com/helm/charts/blob/master/stable/jenkins/values.yaml
-master:
+controller:
   tag: "2.300"
   containerEnv:
     - name: PROJECT_ID
