@@ -29,6 +29,10 @@ provider "google" {
   version = "~> 4.25" # was "~> 2.18.0". Revert in case of compatibility issues.
 }
 
+provider "google-beta" {
+  version = "~> 4.25"
+}
+
 /*****************************************
   Create a VPC Network 
  *****************************************/
