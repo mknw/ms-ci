@@ -151,39 +151,27 @@ We wish to have a data ingestion endpoint to process data through HTTP API reque
 This allows us to receive incoming raw data and (optionally) performing pre-processing before storing them to the PostgreSQL DB. 
 The stored data will be later used by DolphinScheduler implementing the necessary Business Logic. 
 
-### 7. BigQuery Addition
-
-Bigquery configuration can be performed by using the bigquery terraform module. 
 
 ## TODO
 
 1. create Jenkinsfile reflecting python app with tf plan + apply
-2. do we need an artifact storage for the system image of each node pool? 
-   a) can substitute containerregistry.googleapis.com to [artifactregistry.googleapis.com](https://cloud.google.com/artifact-registry/docs/reference/rest) 
-   b) if necessary change `resource "google_project_iam_member" "gke"` resource in main.tf.
-3. Scripts to change locations in all `values.yaml` files, for all plugins (dolphinscheduler, etc.)
-   - Alternatively, ensure that `terraform.tfvars` content is passed correctly to all submodules.
-4. Data Confidentiality. Security / Anonimisation / Credentials Management. 
-
-
-
-continue with: https://plugins.jenkins.io/kubernetes/#plugin-content-declarative-pipeline (already open in firefox.)
+2. Data Confidentiality. Security / Anonimisation / Credentials Management. 
 
 ## Notes
 
-### VPC requirements
+#### VPC requirements
 
 When creating a cluster, the VPC needs:
 
 - sufficient N of IP addresses for cluster, nodes and any other resource. (every pod get is own IP address)
 
-### IP addresses
+#### IP addresses
 
 - Containers within a pod share the pod IP address and can communicate freely with each other.
 - Pods can communicate with all other pods in the cluster using pod IP adresses
 - Isolation is defined using network policies.
 
-### K8s services
+#### K8s services
 
 - Services abstract to a group of pods as a network service.
 - Group of pods is usually defined using a *label selector*

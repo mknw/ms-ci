@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Standard values.yaml can be found at: 
+# https://github.com/helm/charts/blob/master/stable/jenkins/values.yaml
 master:
   tag: "2.300"
   containerEnv:
@@ -226,7 +228,7 @@ master:
         init-jobs: |
             jobs:
               - script: >
-                    multibranchPipelineJob('terraform-jenkins-create-demo') {
+                    multibranchPipelineJob('terraform-jenkins-create-env') {
                         factory {
                         workflowBranchProjectFactory {
                             scriptPath('pipelines/environments/Jenkinsfile')
@@ -234,7 +236,7 @@ master:
                         }
                         branchSources {
                         github {
-                            id('12312313')
+                            id('13374160')
                             scanCredentialsId('github-token')
                             repoOwner("${GITHUB_USERNAME}")
                             repository("${GITHUB_REPO}")
