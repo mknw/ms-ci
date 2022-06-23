@@ -40,7 +40,7 @@ variable "ip_range_pods_name" {
 
 variable "ip_range_services_name" {
   description = "The secondary ip range to use for pods"
-  default     = "ip-range-scv"
+  default     = "ip-range-svc"
 }
 
 variable "network_name" {

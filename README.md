@@ -21,6 +21,7 @@ Massarius Continuous Integration
 7. `cd ..` (or `cd $PROJECT_ROOT`)
 
 8. `gcloud container clusters get-credentials jenkins --zone=europe-west4 --project=${PROJECT_ID}` will retrieve the cluster credentials for jenkins internal use. Run it, the output should be: `Fetching cluster endpoint and auth data. kubeconfig entry generated for jenkins`.
+You will need to run this command every time you want to be able to execute kubectl commands locally.
 
 9. Once Jenkins is provided with cluster credentials, you can output jenkins URL and credentials as follows: 
 
@@ -86,52 +87,43 @@ The following list is brief summary of the content found in `main.tf`, divided b
      
 [Exemplary Code](https://github.com/GoogleCloudPlatform/solutions-terraform-jenkins-gitops/blob/dev/jenkins-gke/tf-gke/main.tf)
 
-### 2.b Define subsequent Dev and Prod environments
+In `terraform-jenkins-gke/values.yaml`, Jenkins is configured to create two create two k8s pools (see 'templates'), on demand. These are labeled `jnlp-exec`, and `terraform-exec`. 
+Furthermore, Github credentials and init-jobs are given as needed from terraform outputs (see `outputs.tf`).  
+`init-jobs` also specify where the pipeline can be found, within the environment folder. 
+To know more about JasC (Jenkins as Code), read [the docs](https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/README.md).
 
-In order to create VPC's for Dev and Prod environments,
+To find explanation for the settings in the `JasC.config-scripts.init-jobs` section, one can inspect the [JasC preview tool](https://jenkinsci.github.io/job-dsl-plugin/#path/multibranchPipelineJob).
+
+### 2.b Define pipeline
+
+In order to create test infrastructure suitability for Dev and Prod environments,
 these need to specified (see `pipelines/environments/`). 
 Both `dev` and `prod` require the same implementation, which enables us to symlink the files `{main,outputs,variables}.tf` to each env.
 
 Each environment is then built by jenkins, as defined in `pipelines/environments/Jenkinsfile`.
 
+The conditional behaviour of the file is defined through shell scripting, and explained in the comments at the top.
+This pipeline consists of three stages, which are started `when` a `changeRequest` is made to `prod` and `dev`. To understand more about the syntax, please consult [the pipeline syntax docs](https://www.jenkins.io/doc/book/pipeline/syntax/).
 
+In practice, changes to the infrastructure are only implemented on GCP when a PR is merged to the `prod` branch.
+Each container summoned by jenkins to validate, test and deploy the infrastructure is defined in the `terraform-jenkins-gke/values.yaml` file, described above.
 
+### 2.c Define actual Environments (Dev and Prod)
 
-### 3. Add necessary components
+The definition of the environments can be changed within `pipelines/create/*`.
 
-The Helm Chart for the job scheduler: DolphinScheduler; will be needed to install the software on k8s. After downloading the chart, one can look at how the 'jenkins` chart is installed (previous section) to perform the same operations with DS.
+Briefly, main.tf contains: 
 
-In order to download the chart, find the newest [src](https://dolphinscheduler.apache.org/en-us/download/download.html), download it as shown and check its integrity: 
+- VPC to run our cluster. 
+- A composer environment providing Airflow functionalities to the cluster. 
+- A compute instance (VM) enabling a minimal version of an HTTP endpoint (Data Ingestion endpoint for contextual and bidstream)
+- networking functionalities enabling connection to HTTP endpoint for direct connection on part of the developer.
 
-    $ tar -zxvf apache-dolphinscheduler-3.0.0-beta-1-src.tar.gz
-    $ cp apache-dolphinscheduler-3.0.0-beta-1-src/deploy/kubernetes/dolphinscheduler ROOT_PROJECT
-   
-where `ROOT_PROJECT` is the location of the present repository. This will make available values.yaml to the main.tf terraform file
-by using the `helm_release` terraform module.
+This represents a minimal configuration of the production cluster, and its meant as initial configuration, on top of which further functionalities and improvements will be implemented.
 
-These changes are implemented in the current repository as of 16/06/2022 and can be found at: terraform/main.tf.
+The remaning part of this document is outdated, but the information contained still true for the present configuration. It can be read to understand the current configuration, but it should not be intended as a step by step guide. 
 
-### 4. Configure DolphinScheduler
-
-In addition to default values, we would like to add features such as: 
-
-- External access the DolphinScheduler UI. 
-  - enable ingress, *or* `kubectl port-forward`'ing ([source](https://dolphinscheduler.apache.org/en-us/docs/latest/user_doc/guide/installation/kubernetes.html))
-- communication between: DolphSched DB (PostgreSQL) and data ingestion node pools.
-- connection between: bigquery and DolphinScheduler Cluster
-
-The overview of the existing DevOps flow given in [2. Define initial infrastructure](###2-define-initial-infrastructure) allows us to define the remaining architecture in a similar fashion.
-
-Later in this document, our objective will be to create *modules* for: 
-- node pool (FastAPI data ingestion endpoint).
-- others?
-
-and *resources* for: 
-- Service Account Permissions involving: 
-  - API endpoint to DB.
-  - DolphinScheduler node pool and BigQuery API.
-
-### 5. Add Jenkins Environments definitions
+### (old) 5. Add Jenkins Environments definitions
 
 Looking at [Diagram 2](https://github.com/Massarius/cloud/issues/175#issuecomment-1143720089), we can see that we are missing: 
 
@@ -149,7 +141,7 @@ Pipelines themselves are defined within the [Jenkinsfile](https://www.jenkins.io
 We wish to have a data ingestion endpoint to process data through HTTP API requests (contextual + bidstream).
 
 This allows us to receive incoming raw data and (optionally) performing pre-processing before storing them to the PostgreSQL DB. 
-The stored data will be later used by DolphinScheduler implementing the necessary Business Logic. 
+The stored data will be later used by Apache Airflow implementing the necessary Business Logic. 
 
 
 ## TODO
