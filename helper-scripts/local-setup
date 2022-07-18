@@ -18,15 +18,19 @@ PROJECT_ROOT="${HOME}/add/path/to/repo"
 
 gcloud config set project $PROJECT_ID
 
-
-git config --global user.email $GITHUB_EMAIL
-git config --global user.name $GITHUB_USER
+# Only uncomment if needed
+# git config --global user.email $GITHUB_EMAIL
+# git config --global user.name $GITHUB_USER
 
 
 GS_BUCKET="gs://${PROJECT_ID}-tfstate"
 
 # create bucket to store infrastructure record: terraform state (tfstate)
-gsutil mb $GS_BUCKET
+if [[ ! "$(gsutil ls)" =~ ${GS_BUCKET} ]]; then
+   gsutil mb $GS_BUCKET
+else
+   echo "Found gs bucket: ${GS_BUCKET}."
+fi
 
 # setup versioning to keep record of infrastractural changes 
 if [[ $(gsutil versioning get $GS_BUCKET | awk '{print $2}') != 'Enabled' ]]; then
@@ -35,7 +39,15 @@ else
    echo "Versioning for ${GS_BUCKET} already enabled."
 fi
 
-# create service account credentials
-gcloud iam service-accounts keys create ../.GSA_TERRAFORM_CLOUD.json --iam-account=terraform-cloud@ornate-reef-342810.iam.gserviceaccount.com
+GSA_FP="${PROJECT_ROOT}/.GSA_TERRAFORM_CLOUD.json"
+if [[ -f  $GSA_FP ]]; then
+   echo "GSA credentials found at ${GSA_FP}. Creating Environment Variable..."
+else
+   # create Google Service Account credentials file.
+   gcloud iam service-accounts keys create $GSA_FP --iam-account="terraform-cloud@${PROJECT_ID}.iam.gserviceaccount.com"
+fi
+
 # export variable for terraform 
-export GOOGLE_APPLICATION_CREDENTIALS="{$PROJECT_ROOT}/.GSA_TERRAFORM_CLOUD.JSON"
+export GOOGLE_APPLICATION_CREDENTIALS="${GSA_FP}"
+
+echo "Done."
