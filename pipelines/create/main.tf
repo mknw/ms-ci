@@ -19,6 +19,7 @@
  *****************************************/
 locals {
   vpc_network_name = "vpc-${var.environment}"
+  nat_subnet_name = "vpc-${var.environment}-${var.subnet2_region}-nat" 
   vm_name = "vm-${var.environment}-api-endpoint"
 }
 
@@ -30,9 +31,19 @@ provider "google" {
 }
 
 /*****************************************
+  IAM member permissions
+ *****************************************/
+resource "google_project_iam_member" "composer_agent_service_account" {
+  count   = var.grant_sa_agent_permission ? 1 : 0
+  project = data.google_project.project.project_id
+  role    = "roles/composer.ServiceAgentV2Ext"
+  member  = format("serviceAccount:%s", local.cloud_composer_sa)
+}
+
+/*****************************************
   Create a VPC Network 
  *****************************************/
-module "composer-vpc" {
+module "data-vpc" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 5.1"
   project_id   = var.project_id
@@ -46,9 +57,9 @@ module "composer-vpc" {
       subnet_region = var.subnet1_region
     },
     {
-      subnet_name = "${local.vpc_network_name}-${var.subnet1_region}-nat"
-      subnet_ip = "192.168.1.0/24"
-      subnet_region = var.subnet1_region
+      subnet_name = local.nat_subnet_name
+      subnet_ip = var.subnet2_cidr 
+      subnet_region = var.subnet2_region
     }
   ]
 }
@@ -62,14 +73,14 @@ module simple-composer-environment {
   source = "terraform-google-modules/composer/google//modules/create_environment_v2"
   project_id                       = var.project_id
   composer_env_name                = var.composer_env_name
-  region                           = var.region
+  region                           = var.subnet1_region
   composer_service_account         = var.composer_service_account
-  network                          = var.network
+  network                          = local.vpc_network_name
   # subnetwork                      = var.subnetwork
-  subnetwork                       = module.composer-vpc.subnets_self_links[0]
+  subnetwork                       = module.data-vpc.subnets_self_links[0]
   pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
   service_ip_allocation_range_name = var.service_ip_allocation_range_name
-  grant_sa_agent_permission        = false
+  grant_sa_agent_permission        = true
   environment_size                 = "ENVIRONMENT_SIZE_MEDIUM"
   environment_variables            = {} // just the default, for future config.
 
@@ -103,8 +114,8 @@ resource "google_compute_instance" "api" {
   name         = local.vm_name
   machine_type = "e2-medium"
   network_interface {
-    network    = module.composer-vpc.network_name
-    subnetwork = module.composer-vpc.subnets_self_links[0]
+    network    = module.data-vpc.network_self_link
+    subnetwork = module.data-vpc.subnets_self_links[0]
   }
   boot_disk {
     initialize_params {
@@ -128,7 +139,7 @@ resource "google_project_iam_member" "project" {
 resource "google_compute_firewall" "rules" {
   project = var.project_id
   name    = "allow-ssh"
-  network = var.network # Replace with a reference or self link to your network, in quotes
+  network = module.data-vpc.network_self_link # Replace with a reference or self link to your network, in quotes
 
   allow {
     protocol = "tcp"
@@ -144,7 +155,7 @@ Setup NAT router
 resource "google_compute_router" "router" {
   project = var.project_id
   name    = "nat-router"
-  network = module.composer-vpc.network_name
+  network = module.data-vpc.network_self_link
   region  = var.subnet1_region
 }
 
@@ -157,6 +168,6 @@ module "cloud-nat" {
   project_id                         = var.project_id
   region                             = var.subnet1_region
   router                             = google_compute_router.router.name
-  name                               = "nat-config"
+  name                               = "nat-access"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }

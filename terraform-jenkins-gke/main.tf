@@ -166,21 +166,21 @@ resource "google_project_iam_member" "jenkins-project" {
   member = module.workload_identity.gcp_service_account_fqn
 }
 
-# data "local_file" "helm_chart_values" {
-#   filename = "${path.module}/values.yaml"
-# }
-# 
-# resource "helm_release" "jenkins" {
-#    name        = "jenkins"
-#    repository  = "https://charts.jenkins.io"
-#    chart       = "jenkins"
-#    version     = "4.1.5"
-#    timeout     = 1200
-# 
-#    values = [data.local_file.helm_chart_values.content]
-# 
-#    depends_on = [
-#       kubernetes_secret.gh-secrets,
-#    ]
-# }
-# 
+data "local_file" "helm_chart_values" {
+  filename = "${path.module}/values.yaml"
+}
+
+resource "helm_release" "jenkins" {
+   name        = "jenkins"
+   repository  = "https://charts.jenkins.io"
+   chart       = "jenkins"
+   version     = "4.1.5"
+   timeout     = 1200
+
+   values = [data.local_file.helm_chart_values.content]
+
+   depends_on = [
+      kubernetes_secret.gh-secrets,
+   ]
+}
+
