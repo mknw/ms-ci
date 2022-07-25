@@ -145,7 +145,7 @@ resource "google_compute_firewall" "rules" {
     protocol = "tcp"
     ports    = ["22"]
   }
-  source_ranges = ["35.235.240.0/20"]
+  source_ranges = ["35.235.240.0/20"] # coming from..?
 }
 
 
@@ -171,3 +171,9 @@ module "cloud-nat" {
   name                               = "nat-access"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
+
+# NOTES:
+# See https://cloud.google.com/iap/docs/using-tcp-forwarding#grant-permission  
+# for necessary roles / permissions
+# See https://cloud.google.com/iap/docs/using-tcp-forwarding#tunneling_ssh_connections 
+# for SSH connection from terminal.
