@@ -45,22 +45,19 @@ controller:
   servicePort: 80
   serviceType: LoadBalancer
   installPlugins:
-      - checks-api:1.7.4 # checks customization
-      - popper2-api:2.11.5-2 # JS tooltip functionality
+      - checks-api:1.7.4
       - sshd:3.242.va_db_9da_b_26a_c3
-      - git-client:3.11.0 # allows git operations
-      - workflow-aggregator:590.v6a_d052e5a_a_b_5 # aka Pipelines
+      - workflow-aggregator:590.v6a_d052e5a_a_b_5
       - plain-credentials:1.8
       - kubernetes-credentials:0.9.0
       - favorite:2.4.1
-      - workflow-support:833.va_1c71061486b_
+      - git-client:3.11.0
       - github:1.34
       - configuration-as-code:1414.v878271fc496f
       - git:4.10.2
       - blueocean-pipeline-scm-api:1.25.5
       - pipeline-stage-tags-metadata:2.2114.v2654ca_721309
       - authentication-tokens:1.4
-      - handlebars:latest # 💠perhaps-removable
       - pipeline-model-extensions:2.2114.v2654ca_721309 
       - token-macro:308.v4f2b_ed62b_b_16
       - mailer:438.v02c7f0a_12fa_4
@@ -70,12 +67,13 @@ controller:
       - cloudbees-folder:6.729.v2b_9d1a_74d673 
       - job-dsl:1.81
       - junit:1119.1121.vc43d0fc45561
-      - credentials-binding:latest
       - workflow-scm-step:400.v6b_89a_1317c9a_
       - pipeline-build-step:2.18
       - ace-editor:1.1
       - sse-gateway:1.25
       - credentials:1139.veb_9579fca_33b_
+      # - workflow-support:833.va_1c71061486b_  💠D-pipeline?
+      # - popper2-api:2.11.5-2 # 💠D JS tooltip functionality
       # - pipeline-graph-analysis:195.v5812d95a_a_2f9 ✔️ 
       # - display-url-api:2.3.6 #️ ✔️
       # - matrix-project:latest  ✔️ 
