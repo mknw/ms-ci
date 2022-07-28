@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+
+# In case where kubectl commands return: 
+# >  Unable to connect to the server: dial tcp IP_ADDRESS: i/o timeout
+
+gcloud container clusters get-credentials jenkins --region=europe-west4
+
+# For more troubleshooting solutions, see:
+# https://cloud.google.com/kubernetes-engine/docs/troubleshooting 
