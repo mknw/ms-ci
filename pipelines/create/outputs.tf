@@ -16,14 +16,18 @@
 
 output "vpc_name" {
   description = "name of the VPC for composer and HTTP endpoint."
-  value = module.gcp-network.network_name
+  value = module.data-vpc.network_name
 }
 
 output "vm_name" {
   description = "Name of the VM to connect for contextual and bidstream apis."
-  value = compute_instance.api.name
+  value = google_compute_instance.api.name
 }
 
+output "service_accounts_iam_emails_list" {
+  description = "created service accounts"
+  value = module.service_accounts.iam_emails_list
+}
 
 // Composer output:
 

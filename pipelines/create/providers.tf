@@ -1,15 +1,29 @@
+/*****************************************
+  Google Provider Configuration
+ *****************************************/
 terraform {
   required_providers {
-    provider "google" {
-      version = "~> 4.25"
+    google = {
+      source = "hashicorp/google"
+      version = ">=4.30.0"
     }
+    # google-beta = {
+    #   source = "hashicorp/google-beta"
+    #   version = "4.30.0"
+    # }
   }
-  required_version = ">= 0.14"
 }
-# provider "google" {
-#   version = "~> 4.25"
-# }
 
-provider "google-beta" {
-  version = "~> 4.25"
+provider "google" {
+  # Configuration options
+  project = var.project_id
+  region = var.subnet1_region
+  zone = var.subnet1_zone
 }
+
+# provider "google-beta" {
+#   # Configuration options
+#   project = var.project_id
+#   region = var.subnet1_region
+#   zone = var.subnet1_zone
+# }

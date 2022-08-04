@@ -21,31 +21,60 @@ locals {
   vpc_network_name = "vpc-${var.environment}"
   nat_subnet_name = "vpc-${var.environment}-${var.subnet2_region}-nat" 
   vm_name = "vm-${var.environment}-api-endpoint"
+  service_account_suffix = "${var.environment}-tf"
+  composer_env_name = "${var.environment}-composer-env"
 }
+
 
 /*****************************************
-  Google Provider Configuration
+ Service Accounts 
  *****************************************/
-provider "google" {
-  version = "~> 4.25" # was "~> 2.18.0". Revert in case of compatibility issues.
+module "service_accounts" {
+  source        = "terraform-google-modules/service-accounts/google"
+  version       = ">= 4.1"
+  project_id    = var.project_id
+  prefix        = local.service_account_suffix
+  names         = ["composer", "nat-tunnel-access"]
+  project_roles = ["${var.project_id}=>roles/viewer"]
+  display_name  = "Prod Env Composer"
+  description   = "SA for Composer in Production Environment"
 }
+/* more service accounts */
+# module "service_accounts" {
+#   source        = "terraform-google-modules/service-accounts/google"
+#   version       = ">= 4.1"
+#   project_id    = var.project_id
+#   prefix        = "service"
+#   names         = ["1006414158279"]
+#   project_roles = ["${var.project_id}=>roles/viewer"]
+#   display_name  = "Prod Env Composer"
+#   description   = "SA for Composer in Production Environment"
+# }
 
+/**************
+Service Account for composer Airflow
+**************/
+resource "google_project_iam_member" "airflow_sa" {
+  project = var.project_id
+  member  = "${module.service_accounts.iam_emails_list[0]}"
+  role    = "roles/composer.ServiceAgentV2Ext"
+}
 /*****************************************
   IAM member permissions
  *****************************************/
-resource "google_project_iam_member" "composer_agent_service_account" {
-  count   = var.grant_sa_agent_permission ? 1 : 0
-  project = data.google_project.project.project_id
-  role    = "roles/composer.ServiceAgentV2Ext"
-  member  = format("serviceAccount:%s", local.cloud_composer_sa)
-}
+# resource "google_project_iam_member" "composer_agent_service_account" {
+#   count   = var.grant_sa_agent_permission ? 1 : 0
+#   project = data.google_project.project.project_id
+#   role    = "roles/composer.ServiceAgentV2Ext"
+#   member  = format("serviceAccount:%s", local.composer_service_account)
+# }
 
 /*****************************************
   Create a VPC Network 
  *****************************************/
 module "data-vpc" {
   source       = "terraform-google-modules/network/google"
-  version      = "~> 5.1"
+  version      = ">= 5.1"
   project_id   = var.project_id
   network_name = local.vpc_network_name
   mtu          = 1460
@@ -72,17 +101,18 @@ module "data-vpc" {
 module simple-composer-environment {
   source = "terraform-google-modules/composer/google//modules/create_environment_v2"
   project_id                       = var.project_id
-  composer_env_name                = var.composer_env_name
+  composer_env_name                = local.composer_env_name
   region                           = var.subnet1_region
-  composer_service_account         = var.composer_service_account
-  network                          = local.vpc_network_name
+  # composer_service_account         = "${module.service_accounts.iam_emails_list[0]}"
+  composer_service_account         = "${module.service_accounts.emails_list[0]}"
+  network                          = module.data-vpc.network_id
   # subnetwork                      = var.subnetwork
   subnetwork                       = module.data-vpc.subnets_self_links[0]
   pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
   service_ip_allocation_range_name = var.service_ip_allocation_range_name
   grant_sa_agent_permission        = true
   environment_size                 = "ENVIRONMENT_SIZE_MEDIUM"
-  environment_variables            = {} // just the default, for future config.
+  # environment_variables            = {} // just the default, for future config.
 
   scheduler = {
     cpu        = 0.875
@@ -124,13 +154,15 @@ resource "google_compute_instance" "api" {
   }
 }
 
+
 /**************
 Service Account for NAT connection
 **************/
-resource "google_project_iam_member" "project" {
+resource "google_project_iam_member" "nat_access" {
   project = var.project_id
   role    = "roles/iap.tunnelResourceAccessor"
-  member  = "serviceAccount:nat-tunnel-access@${var.project_id}.iam.gserviceaccount.com"
+  member  = "${module.service_accounts.iam_emails_list[1]}"
+  # member  = "serviceAccount:nat-tunnel-access@${var.project_id}.iam.gserviceaccount.com"
 }
 
 /********************
@@ -164,7 +196,7 @@ Cloud NAT
 **************/
 module "cloud-nat" {
   source                             = "terraform-google-modules/cloud-nat/google"
-  version                            = "~> 2.0.0"
+  version                            = ">= 2.2.1"
   project_id                         = var.project_id
   region                             = var.subnet1_region
   router                             = google_compute_router.router.name
