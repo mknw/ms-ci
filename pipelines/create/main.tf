@@ -105,7 +105,7 @@ module simple-composer-environment {
   region                           = var.subnet1_region
   # composer_service_account         = "${module.service_accounts.iam_emails_list[0]}"
   composer_service_account         = "${module.service_accounts.emails_list[0]}"
-  network                          = module.data-vpc.network_id
+  network                          = module.data-vpc.network_name
   # subnetwork                      = var.subnetwork
   subnetwork                       = module.data-vpc.subnets_self_links[0]
   pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
