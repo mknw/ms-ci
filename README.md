@@ -2,6 +2,9 @@
 
 Massarius Continuous Integration
 
+> **Disclaimer**: this instructions have been superseeded by the minimal configurations present in `pipelines/environments/minimal-prod{,-module}`.  
+The current information is left here as a tangential reference of what the solutions explored, as well as a potential testbed for future DevOps experiments. When reading this document, please be aware of the limitations of the settings in which it was written.
+
 ## How to use
 
 ### Create Jenkins K8S cluster
@@ -41,11 +44,6 @@ This command does not return, therefore you can run it in a different shell than
 (to get jenkins token one can run `curl -v -X GET http://LOCAL_HOST:LOCAL_PORT/crumbIssuer/api/json --user username:password`. This info is useless here but we keep it for reference).
 
 `export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=jenkins" -o jsonpath="{.items[0].metadata.name}")`
-
-
-### Changing the infrastructure
-
-
 
 
 ## Configuration
@@ -123,6 +121,15 @@ This represents a minimal configuration of the production cluster, and its meant
 
 The remaning part of this document is outdated, but the information contained still true for the present configuration. It can be read to understand the current configuration, but it should not be intended as a step by step guide. 
 
+### 2.d Placeholder par.
+
+The writing of this document was interrupted as we experienced issues in implementing the dev and prod environment. 
+
+Currently, most of the work being done can be found in the `pipelines/environments` directory. Information on the relevant development can be found in the README.txt in that directory.
+
+
+
+
 ### (old) 5. Add Jenkins Environments definitions
 
 Looking at [Diagram 2](https://github.com/Massarius/cloud/issues/175#issuecomment-1143720089), we can see that we are missing: 
@@ -144,29 +151,23 @@ This allows us to receive incoming raw data and (optionally) performing pre-proc
 The stored data will be later used by Apache Airflow implementing the necessary Business Logic. 
 
 
-## TODO
-
-1. create Jenkinsfile reflecting python app with tf plan + apply
-2. Data Confidentiality. Security / Anonimisation / Credentials Management. 
-
 ## Notes
 
-#### VPC requirements
+### VPC requirements
 
 When creating a cluster, the VPC needs:
 
 - sufficient N of IP addresses for cluster, nodes and any other resource. (every pod get is own IP address)
 
-#### IP addresses
+### IP addresses
 
 - Containers within a pod share the pod IP address and can communicate freely with each other.
 - Pods can communicate with all other pods in the cluster using pod IP adresses
 - Isolation is defined using network policies.
 
-#### K8s services
+### K8s services
 
 - Services abstract to a group of pods as a network service.
 - Group of pods is usually defined using a *label selector*
--  
 
 This style of network can be called 'flat network'.

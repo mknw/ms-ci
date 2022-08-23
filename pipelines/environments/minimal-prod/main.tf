@@ -35,8 +35,6 @@ resource "google_project_service" "composer_api" {
 
 
 
-
-
 /*****************************************
  Service Accounts 
  *****************************************/

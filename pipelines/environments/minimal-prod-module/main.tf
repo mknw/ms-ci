@@ -18,13 +18,14 @@ module "exp-composer-environment" {
   source                           = "terraform-google-modules/composer/google//modules/create_environment_v2"
   project_id                       = var.project_id
   composer_env_name                = var.composer_env_name
-  region                           = "europe-west4" // var.subnet1_region
+  region                           = var.subnet1_region
   # composer_service_account         = var.composer_service_account
   network                          = "default"
-  subnetwork                       = "europe-west4-a"
+  subnetwork                       = "default"
+  subnetwork_region                = var.subnet1_region
   # pod_ip_allocation_range_name     = var.pod_ip_allocation_range_name
   # service_ip_allocation_range_name = var.service_ip_allocation_range_name
-  # grant_sa_agent_permission        = false
+  # grant_sa_agent_permission        = true # by default
   environment_size                 = "ENVIRONMENT_SIZE_SMALL"
   scheduler = {
     cpu        = 0.5
