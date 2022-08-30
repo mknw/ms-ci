@@ -2,7 +2,6 @@
 
 The current directory hold the effective configurations for Production and Development environments, called **prod** and **env**, respectively.
 
-> **Disclaimer**: at the moment of writing, none of the environments can be assumed to achieve a complete configuration. This is reflected in the first row of the table below, reading 'fully working'.
 
 In addition to prod and dev, other environments are also being tested. These are `minimal-prod` and `minimal-prod-module`. 
 
@@ -15,8 +14,8 @@ These is the state of the current repositories, updated in date 19/8/2022:
 | Fully Working | :x: | :white_check_mark: |:x: |:x: |
 | Experimental | :white_check_mark: | :white_check_mark: | :x: | :x: |
 | Shared Files | | | :white_check_mark: | :white_check_mark: |
-| Meant for deployment | :x: | :x: | :white_check_mark: | :white_check_mark: |
-| VM configuration | :x: | :x: | :white_check_mark: | :white_check_mark: |
+| Meant for deployment | :x: | :arrow_right: | :white_check_mark: | :white_check_mark: |
+| VM configuration | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 ### Explanation
 
@@ -31,13 +30,9 @@ These is the state of the current repositories, updated in date 19/8/2022:
 
 Each environment directory also contains files called `terraform.tfvars` overriding the default values specified in `varibales.tf`, wherever it is necessary. 
 
-The fields **meant for deployment** and **VM configuration** are specifying aspects of each configuration which could not be fully tested. 
+The only **VM configuration** working is on *minimal-prod-env*, which should become the new dev.
 
-Each configuration should be worked on without touching other configurations. This is because the state-tflock file is synced with the GCP storage bucket in the GC Project. Once one configuration is tried, we can continue 
+The fields **meant for deployment** are legacy terms associated with the initial setups, which failed to deploy. 
+The future dev and mantainer of this repo should make *minimal-prod-env* the new dev and prod, virtually identical from the beginning.
 
-## Minimal configurations
-
-This can be run by cd'ing in each directory and running `terraform apply`. 
-
-In the last few days of my employment at MS, I will focus on the minimal-prod-module to configure our DevOps structure. 
-
+Note that, when one configuration is worked on, no other configurations should be touched. This is because the state-tflock file is synced with the GCP storage bucket in the GC Project. Of course one can load different initialization scripts (`helper-scripts`) and work concurrently on different GCP projects.
