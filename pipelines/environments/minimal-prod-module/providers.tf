@@ -24,7 +24,7 @@ terraform {
 provider "google-beta" {
   # Configuration options
   project = var.project_id
-  region = var.subnet1_region
-  zone = var.subnet1_zone
+  region = var.region
+  # zone = var.subnet1_zone
   request_timeout = "60m"
 }

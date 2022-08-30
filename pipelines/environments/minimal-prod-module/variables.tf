@@ -32,40 +32,17 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "subnet1_region" {
+variable "region" {
   type        = string
-  description = "GCP Region where first subnet will be created"
+  description = "gcp region where first subnet will be created"
   default     = "europe-west4"
 }
 
-variable "subnet1_zone" {
-  type        = string
-  description = "GCP Zone within Subnet1 Region where GCE instance will be created"
-  default     = "europe-west4-a"
-}
 
-variable "subnet1_cidr" {
+variable "subnetwork" {
   type        = string
-  description = "VPC Network CIDR to be assigned to the VPC being created"
-  default     = "10.0.0.0/16"
-}
-
-variable "subnet2_region" {
-  type        = string
-  description = "GCP Region where first subnet will be created"
-  default     = "europe-west4"
-}
-
-variable "subnet2_zone" {
-  type        = string
-  description = "GCP Zone within Subnet2 Region where GCE instance will be created"
-  default     = "europe-west4-a"
-}
-
-variable "subnet2_cidr" {
-  type        = string
-  description = "VPC Network CIDR to be assigned to the VPC being created"
-  default     = "20.0.0.0/16"
+  description = "subnetwork for the environment to be deployed on "
+  default     = "default"
 }
 
 variable "composer_env_name" {
@@ -99,3 +76,39 @@ variable "environment_size" {
   type = string
   default = "ENVIRONMENT_SIZE_MEDIUM"
 }
+
+/*
+ The following configuration was used previously, and kept here
+ below for reference and ease of implementation in the future. 
+ it is not, however, to be used 'as is'. Please, always know what you're doing! 
+*/
+
+# variable "subnet1_zone" {
+#   type        = string
+#   description = "GCP Zone within Subnet1 Region where GCE instance will be created"
+#   default     = "europe-west4-a"
+# }
+
+# variable "subnet1_cidr" {
+#   type        = string
+#   description = "VPC Network CIDR to be assigned to the VPC being created"
+#   default     = "10.0.0.0/16"
+# }
+
+# variable "subnet2_region" {
+#   type        = string
+#   description = "GCP Region where first subnet will be created"
+#   default     = "europe-west4"
+# }
+
+# variable "subnet2_zone" {
+#   type        = string
+#   description = "GCP Zone within Subnet2 Region where GCE instance will be created"
+#   default     = "europe-west4-a"
+# }
+
+# variable "subnet2_cidr" {
+#   type        = string
+#   description = "VPC Network CIDR to be assigned to the VPC being created"
+#   default     = "20.0.0.0/16"
+# }

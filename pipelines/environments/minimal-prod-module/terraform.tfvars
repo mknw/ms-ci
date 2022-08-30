@@ -1,5 +1,6 @@
 environment = "prod"
-subnet1_region = "europe-west3"
+region = "europe-west3"
+subnetwork = "default"
 # subnet1_zone = "europe-west4-a"
 # subnet1_cidr = "10.30.0.0/24"
 # # NAT subnet
