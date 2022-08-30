@@ -2,8 +2,14 @@
 
 Massarius Continuous Integration
 
-> **Disclaimer**: this instructions have been superseeded by the minimal configurations present in `pipelines/environments/minimal-prod{,-module}`.  
-The current information is left here as a tangential reference of what the solutions explored, as well as a potential testbed for future DevOps experiments. When reading this document, please be aware of the limitations of the settings in which it was written.
+For an updated description of this repository, please read this documents in the following order:
+
+1. [](pipelines/environments/README.md)
+2. [](pipelines/environments/mod-dev/README.md)
+3. [](terraform-jenkins-gke/README.md)
+
+> **Disclaimer**: this instructions have been superseeded by the minimal configurations in [pipelines](pipelines/environments/mod-dev).  
+The current information is left here as a tangential reference of what previously attempted solutions explored, as well as a potential testbed for future DevOps experiments. When reading what follows, please be aware of the limitations of the settings in which it was written.
 
 ## How to use
 
