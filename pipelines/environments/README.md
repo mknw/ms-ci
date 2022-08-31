@@ -34,5 +34,5 @@ The only **VM configuration** working is on *minimal-prod-env*, which should bec
 
 The fields **meant for deployment** are legacy terms associated with the legacy setups, which raised problems in deployment.
 The future developer/mantainer of this repo should consider using **dev-mod** as starting point for future configurations.
-make 
+
 Note that, when one configuration is worked on, no other configurations should be touched. This is because the state-tflock file is synced with the GCP storage bucket in the GCP Project.

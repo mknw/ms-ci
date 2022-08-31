@@ -26,18 +26,19 @@ This environment deploys:
 
 1. a GCP Composer Instance
 2. service account of the management of Virtual Machines
-3. an instance template for VM configurations
+3. an instance template for VM configurations (to be customized)
 4. a VM dedicated to be setup for scraping (contextual comes to mind.)
 
 This configuration can be easily extended repeating some blocks already present in the `main.tf` file.
 
 Here are some ideas for future additions which could be useful to the team. The following list aims at providing, for each component: 1) business applications; 2) difficulty of implementation; and 3) links to documentation.
 
+- Adding specific requirements to VM template image (e.g. Selenium driver, and other dependencies (pip, etc.))
 - Additional VM as HTTP endpoint
    1. Bidstream
    2. Easy
    3. see [legacy dev](../legacy-dev/main.tf) for a nearly complete implementation. IGRESS Firewall rules should also be applied as shown. For the latter, examples and docs can be found [here](https://github.com/terraform-google-modules/terraform-google-network/tree/master/modules/firewall-rules). Please keep in mind that this might consist of a security risk. To avoid this, a different subnetwork as well as other strategies can be used.
-- Database 
+- Database [optional]
    1. Store data to be parsed from DAG's.
    2. Medium
    3. [database modules](https://github.com/terraform-google-modules/terraform-google-sql-db)

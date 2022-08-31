@@ -34,7 +34,7 @@ pipeline {
     stage('TF init & validate') {
       when { anyOf {branch "prod";branch "dev";changeRequest() } }
       steps {
-        //# TODO unittest {}
+        //# TODO unittest
         container('terraform') {
           sh '''
           if [[ $CHANGE_TARGET ]]; then
